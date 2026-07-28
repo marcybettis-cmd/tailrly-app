@@ -52,6 +52,30 @@ export default function Dashboard() {
                     <h2 className="font-semibold">Profile</h2>
                     <p className="text-sm text-gray-600">View your account details.</p>
                 </a>
+                <a href="/user/profile" className="rounded border p-4 hover:shadow">
+                    <h2 className="font-semibold">User Profile</h2>
+                    <p className="text-sm text-gray-600">Manage your account settings.</p>
+                </a>
+                <a href="/upload-design" className="rounded border p-4 hover:shadow">
+                    <h2 className="font-semibold">Upload Design</h2>
+                    <p className="text-sm text-gray-600">Share your design inspiration.</p>
+                </a>
+                <a href="/request" className="rounded border p-4 hover:shadow">
+                    <h2 className="font-semibold">Submit Request</h2>
+                    <p className="text-sm text-gray-600">Describe what you want tailored or designed.</p>
+                </a>
+                <a href="/user/profile" className="rounded border p-4 hover:shadow">
+                    <h2 className="font-semibold">User Profile</h2>
+                    <p className="text-sm text-gray-600">Manage your account settings.</p>
+                </a>
+                <a href="/upload-design" className="rounded border p-4 hover:shadow">
+                    <h2 className="font-semibold">Upload Design</h2>
+                    <p className="text-sm text-gray-600">Share your design inspiration.</p>
+                </a>
+                <a href="/request" className="rounded border p-4 hover:shadow">
+                    <h2 className="font-semibold">Submit Request</h2>
+                    <p className="text-sm text-gray-600">Describe what you want tailored or designed.</p>
+                    </a>
             </div>
 
             <button

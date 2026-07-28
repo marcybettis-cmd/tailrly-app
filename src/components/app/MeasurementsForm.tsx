@@ -1,6 +1,7 @@
 'use client';
 
-import {  useState } from 'react';
+import { useState, FormEvent } from 'react';
+import { supabase } from '../../lib/supabaseClient';
 
 interface Measurements {
     height: string;
@@ -20,6 +21,7 @@ export default function MeasurementsForm({ onSubmit }: Props) {
     });
     const [errors, setErrors] = useState<Partial<Measurements>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState<string | null>(null);
 
     const validate = (): boolean => {
         const newErrors: Partial<Measurements> = {};
@@ -52,20 +54,56 @@ export default function MeasurementsForm({ onSubmit }: Props) {
         setValues({ ...values, [field]: e.target.value });
     };
 
-    const handleSubmit = (e: FormEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         if (!validate()) return;
 
         setIsSubmitting(true);
-        // simulate async work
-        setTimeout(() => {
+        setSubmitError(null);
+
+        try {
+            // Get the current session
+            const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+            if (sessionError || !session) {
+                setSubmitError("You must be logged in to save measurements.");
+                return;
+            }
+
+            const response = await fetch("/api/save-measurements", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${session.access_token}`,
+                },
+                body: JSON.stringify(values),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                setSubmitError(data?.error || "Failed to save measurements.");
+            } else {
+                onSubmit?.(values);
+                // Reset form or show success
+                setValues({ height: '', weight: '', waist: '' });
+            }
+        } catch (err) {
+            console.error("Measurements save failed", err);
+            setSubmitError("Unable to save measurements. Please try again.");
+        } finally {
             setIsSubmitting(false);
-            onSubmit?.(values);
-        }, 500);
+        }
     };
 
     return (
         <form onSubmit={handleSubmit} className="space-y-6">
+            {submitError && (
+                <div className="rounded-md bg-red-50 p-4">
+                    <p className="text-sm text-red-600">{submitError}</p>
+                </div>
+            )}
+
             {/* height */}
             <div>
                 <label
@@ -80,10 +118,8 @@ export default function MeasurementsForm({ onSubmit }: Props) {
                     type="text"
                     value={values.height}
                     onChange={handleChange('height')}
-                    className={`mt-1 block w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${{
-                        true: 'border-red-500',
-                        false: 'border-gray-300',
-                    }[Boolean(errors.height)]}`}
+                    className={`mt-1 block w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${errors.height ? 'border-red-500' : 'border-gray-300'
+                        }`}
                 />
                 {errors.height && (
                     <p className="mt-1 text-sm text-red-600">{errors.height}</p>
@@ -104,10 +140,8 @@ export default function MeasurementsForm({ onSubmit }: Props) {
                     type="text"
                     value={values.weight}
                     onChange={handleChange('weight')}
-                    className={`mt-1 block w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${{
-                        true: 'border-red-500',
-                        false: 'border-gray-300',
-                    }[Boolean(errors.weight)]}`}
+                    className={`mt-1 block w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${errors.weight ? 'border-red-500' : 'border-gray-300'
+                        }`}
                 />
                 {errors.weight && (
                     <p className="mt-1 text-sm text-red-600">{errors.weight}</p>
@@ -128,10 +162,8 @@ export default function MeasurementsForm({ onSubmit }: Props) {
                     type="text"
                     value={values.waist}
                     onChange={handleChange('waist')}
-                    className={`mt-1 block w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${{
-                        true: 'border-red-500',
-                        false: 'border-gray-300',
-                    }[Boolean(errors.waist)]}`}
+                    className={`mt-1 block w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${errors.waist ? 'border-red-500' : 'border-gray-300'
+                        }`}
                 />
                 {errors.waist && (
                     <p className="mt-1 text-sm text-red-600">{errors.waist}</p>

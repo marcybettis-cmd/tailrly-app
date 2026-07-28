@@ -1,17 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 
 export default function DashboardPage() {
-    const [userEmail, setUserEmail] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        const email = localStorage.getItem('userEmail');
-        setUserEmail(email);
-        setIsLoading(false);
-    }, []);
+    const [userEmail, setUserEmail] = useState<string | null>(() => {
+        if (typeof window !== 'undefined') {
+            return localStorage.getItem('userEmail');
+        }
+        return null;
+    });
+    const [isLoading] = useState(false);
 
     const handleLogout = () => {
         localStorage.removeItem('userEmail');

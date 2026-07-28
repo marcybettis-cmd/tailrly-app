@@ -1,57 +1,38 @@
 "use client";
 
-import { useState } from "react";
-import { supabase } from "../../lib/supabaseClient";
+import Link from "next/link";
 
-export default function Login() {
-  const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
+export default function LoginPage() {
+    return (
+        <main className="min-h-screen p-10">
+            <div className="mx-auto max-w-md">
+                <h1 className="text-3xl font-bold">Login to Tailrly</h1>
+                <p className="mt-2 text-gray-600">
+                    Choose how you'd like to log in.
+                </p>
 
-  const handleLogin = async () => {
-    if (!email) {
-      alert("Please enter your email.");
-      return;
-    }
-    try {
-      setLoading(true);
+                <div className="mt-8 space-y-4">
+                    <Link
+                        href="/user/login"
+                        className="block w-full rounded bg-black px-4 py-3 text-center text-white hover:bg-gray-900"
+                    >
+                        Login as Customer
+                    </Link>
+                    <Link
+                        href="/designers/login"
+                        className="block w-full rounded border px-4 py-3 text-center hover:bg-gray-50"
+                    >
+                        Login as Designer
+                    </Link>
+                </div>
 
-      const origin = typeof window !== "undefined" ? window.location.origin : "http://localhost:3000";
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: { emailRedirectTo: `${origin}/dashboard` },
-      });
-
-      if (error) {
-        alert(error.message);
-        return;
-      }
-
-      alert("Check your email for the login link.");
-    } catch (error) {
-      alert("An error occurred. Please try again.");
-      console.error(error);
-    }
-  };
-
-  return (
-    <div className="p-10">
-      <h1 className="text-2xl font-bold">Login</h1>
-
-      <input
-        type="email"
-        placeholder="Enter email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        className="mt-4 border p-2"
-      />
-
-      <button
-        onClick={handleLogin}
-        disabled={!email}
-        className="ml-2 bg-black px-4 py-2 text-white"
-      >
-        Continue
-      </button>
-    </div>
-  );
+                <p className="mt-8 text-center text-sm text-gray-600">
+                    Don't have an account?{" "}
+                    <Link href="/user/login" className="text-black underline">
+                        Sign up here
+                    </Link>
+                </p>
+            </div>
+        </main>
+    );
 }

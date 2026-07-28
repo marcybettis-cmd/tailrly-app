@@ -1,7 +1,7 @@
-'"use client"
+"use client";
 
 import { useState } from "react"
-import { supabase } from "../../lib/supabaseClient";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function Upload() {
   const [chest, setChest] = useState("")
@@ -25,9 +25,9 @@ export default function Upload() {
 
   return (
     <div className="p-10 space-y-4">
-      <input placeholder="Chest" onChange={(e)=>setChest(e.target.value)} className="border p-2"/>
-      <input placeholder="Waist" onChange={(e)=>setWaist(e.target.value)} className="border p-2"/>
-      <input placeholder="Hips" onChange={(e)=>setHips(e.target.value)} className="border p-2"/>
+      <input placeholder="Chest" onChange={(e) => setChest(e.target.value)} className="border p-2" />
+      <input placeholder="Waist" onChange={(e) => setWaist(e.target.value)} className="border p-2" />
+      <input placeholder="Hips" onChange={(e) => setHips(e.target.value)} className="border p-2" />
       <button onClick={saveMeasurements} className="bg-black text-white p-2">
         Save Measurements
       </button>

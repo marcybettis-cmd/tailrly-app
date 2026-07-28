@@ -1,0 +1,556 @@
+openapi: 3.0.3
+info:
+  title: Tailrly API
+  version: 0.1.0
+  description: API for the Tailrly custom fashion platform.
+servers:
+  - url: https://api.example.com
+security:
+  - bearerAuth: []
+paths:
+  /auth/oauth/start:
+    post:
+      summary: Start OAuth login
+      responses:
+        '302':
+          description: Redirect to OAuth provider
+  /auth/oauth/callback:
+    post:
+      summary: OAuth callback
+      responses:
+        '200':
+          description: Auth tokens issued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthTokens'
+  /me:
+    get:
+      summary: Get current user
+      responses:
+        '200':
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /users/{id}:
+    get:
+      summary: Get user by id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User
+          content:
+            application/json:
+              schema:
+                
+  $ref: '#/components/schemas/User'
+  /users/{id}/role:
+    put:
+      summary: Update user role (admin)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role:
+                  type: string
+                  enum: [user, tailor, admin]
+      responses:
+        '200':
+          description: Updated user
+  /measurements:
+    post:
+      summary: Create measurements
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Measurement'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Measurement'
+  /measurements/{id}:
+    put:
+      summary: Update measurements
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Measurement'
+      responses:
+        '200':
+          description: Updated
+  /scans:
+    post:
+      summary: Upload body scan images
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                images:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                metadata:
+                  
+  $ref: '#/components/schemas/ScanMetadata'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                
+  $ref: '#/components/schemas/Scan'
+  /scans/{id}:
+    get:
+      summary: Get scan
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Scan
+          content:
+            application/json:
+              schema:
+                
+  $ref: '#/components/schemas/Scan'
+  /requests:
+    post:
+      summary: Create request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Measurement'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                
+  $ref: '#/components/schemas/Request'
+    get:
+      summary: List requests
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+        - in: query
+          name: role
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Request list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  
+  $ref: '#/components/schemas/Request'
+  /requests/{id}:
+    get:
+      summary: Get request
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Request
+          content:
+            application/json:
+              schema:
+                
+  $ref: '#/components/schemas/Request'
+    patch:
+      summary: Update request status
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              
+  $ref: '#/components/schemas/RequestStatusUpdate'
+      responses:
+        '200':
+          description: Updated
+  /requests/{id}/bids:
+    post:
+      summary: Create bid
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              
+  $ref: '#/components/schemas/Bid'
+      responses:
+        '201':
+          description: Created
+    get:
+      summary: List bids for request
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Bid list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  
+  $ref: '#/components/schemas/Bid'
+  /bids/{id}/accept:
+    post:
+      summary: Accept bid
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Accepted
+  /requests/{id}/messages:
+    post:
+      summary: Send message
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              
+  $ref: '#/components/schemas/Message'
+      responses:
+        '201':
+          description: Sent
+    get:
+      summary: Get messages
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  
+  $ref: '#/components/schemas/Message'
+  /requests/{id}/deposit:
+    post:
+      summary: Create deposit payment
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Deposit initiated
+  /requests/{id}/release-payment:
+    post:
+      summary: Release payment to tailor
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Payment released
+  /requests/{id}/payments:
+    get:
+      summary: Get payment status
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Payment info
+          content:
+            application/json:
+              schema:
+                
+  $ref: '#/components/schemas/Payment'
+  /requests/{id}/status:
+    post:
+      summary: Update job status
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              
+  $ref: '#/components/schemas/RequestStatusUpdate'
+      responses:
+        '200':
+          description: Updated
+    get:
+      summary: Get job status history
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Status history
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  
+  $ref: '#/components/schemas/RequestStatusUpdate'
+  /requests/{id}/review:
+    post:
+      summary: Submit review
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              
+  $ref: '#/components/schemas/Review'
+      responses:
+        '201':
+          description: Review submitted
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    AuthTokens:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+          enum: [user, tailor, admin]
+    Measurement:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        heightCm:
+          type: number
+        weightKg:
+          type: number
+        chestCm:
+          type: number
+        waistCm:
+          type: number
+        hipCm:
+          type: number
+        inseamCm:
+          type: number
+        notes:
+          type: string
+    ScanMetadata:
+      type: object
+      properties:
+        captureDevice:
+          type: string
+        lighting:
+          type: string
+        pose:
+          type: string
+    Scan:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        imageUrls:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+    Request:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        measurementId:
+          type: string
+        scanId:
+          type: string
+        preferences:
+          type: object
+        status:
+          type: string
+    RequestStatusUpdate:
+      type: object
+      properties:
+        status:
+          type: string
+        note:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+    Bid:
+      type: object
+      properties:
+        id:
+          type: string
+        requestId:
+          type: string
+        tailorId:
+          type: string
+        price:
+          type: number
+        currency:
+          type: string
+        etaDays:
+          type: integer
+        notes:
+          type: string
+    Message:
+      type: object
+      properties:
+        id:
+          type: string
+        requestId:
+          type: string
+        senderId:
+          type: string
+        body:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    Payment:
+      type: object
+      properties:
+        requestId:
+          type: string
+        status:
+          type: string
+        amount:
+          type: number
+        currency:
+          type: string
+    Review:
+      type: object
+      properties:
+        requestId:
+          type: string
+        rating:
+          type: integer
+        comment:
+          type: string
+
+
